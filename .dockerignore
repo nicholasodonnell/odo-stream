@@ -1,0 +1,17 @@
+# next
+.next
+.vercel
+
+# build
+dist
+
+# node
+node_modules
+npm-debug.log*
+
+# docker
+.env
+docker-compose.override.yml
+
+# config
+config

@@ -1,0 +1,22 @@
+version: "3.5"
+services:
+
+  app:
+    build:
+      context: .
+    container_name: odo-stream-app
+    env_file:
+      - .env
+    image: nicholasodonnell/odo-stream-app:latest
+    ports:
+      - 3000:3000
+
+  restreamer:
+    container_name: restreamer
+    env_file:
+      - .env
+    image: datarhei/restreamer:0.6.8
+    ports:
+      - 8080:8080
+    volumes:
+      - ./config:/restreamer/db

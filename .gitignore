@@ -1,0 +1,22 @@
+# next
+.next
+.vercel
+
+# build
+dist
+
+# node
+node_modules
+npm-debug.log*
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# docker
+.env
+docker-compose.override.yml
+
+# restreamer
+config/*
+!config/.gitkeep
