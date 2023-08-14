@@ -10,7 +10,8 @@ export type PlayerProps = {
   src: string
 }
 
-const hlsConfig: Partial<HlsPlayerProps['hlsConfig']> = {
+const hlsConfig = {
+  liveDurationInfinity: true,
   lowLatencyMode: true,
 }
 
@@ -19,10 +20,7 @@ export function Player({ className, src }: PlayerProps): React.ReactNode {
 
   useEffect(() => {
     function handleError(e: ErrorEvent) {
-      const error = new Error(e.message ?? 'Unknown error')
-      console.error(error)
-
-      throw error
+      throw new Error(`Error playing video: ${e.message}`, { cause: e })
     }
 
     playerRef.current?.addEventListener('error', handleError)
@@ -35,7 +33,7 @@ export function Player({ className, src }: PlayerProps): React.ReactNode {
       autoPlay
       className={cx(className)}
       controls
-      hlsConfig={hlsConfig as HlsPlayerProps['hlsConfig']}
+      hlsConfig={hlsConfig as unknown as HlsPlayerProps['hlsConfig']}
       muted
       playerRef={playerRef}
       playsInline

@@ -17,20 +17,14 @@ async function getOnline() {
   }
 
   try {
-    const res = await fetch(`${process.env.RS_URL}/v1/states`)
-
-    if (!res.ok) {
-      throw new Error('Bad response')
-    }
-
+    const res: Response = await fetch(`${process.env.RS_URL}/v1/states`)
     const data = await res.json()
 
-    return data?.repeat_to_local_nginx?.type === 'connected'
-  } catch (cause) {
-    const error = new Error('Failed to fetch stream state', { cause })
-    console.error(error)
-
-    throw error
+    return data?.repeat_to_local_nginx?.type !== 'disconnected'
+  } catch (e: any) {
+    throw new Error(`Failed to fetch stream state: ${e.message}`, {
+      cause: e,
+    })
   }
 }
 
