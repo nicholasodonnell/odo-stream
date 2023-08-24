@@ -4,10 +4,10 @@ services:
   app:
     build:
       context: .
-    container_name: odo-stream-app
+    container_name: odo-stream
     env_file:
       - .env
-    image: nicholasodonnell/odo-stream-app:latest
+    image: nicholasodonnell/odo-stream:latest
     ports:
       - 3000:3000
 
