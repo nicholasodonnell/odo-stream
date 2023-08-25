@@ -10,8 +10,13 @@ export async function GET(): Promise<Response> {
       `${process.env.RS_URL}/hls/live.stream.m3u8`,
     )
 
-    // return response
-    return new NextResponse(response.body)
+    return new NextResponse(response.body, {
+      headers: {
+        'Content-Type':
+          response.headers.get('Content-Type') ||
+          'application/vnd.apple.mpegurl',
+      },
+    })
   } catch (e: any) {
     throw new Error(`Failed to fetch playlist: ${e.message}`, {
       cause: e,

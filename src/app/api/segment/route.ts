@@ -12,7 +12,12 @@ export async function GET(request: NextRequest): Promise<Response> {
       `${process.env.RS_URL}/hls${requestUrl.pathname}`,
     )
 
-    return new NextResponse(response.body)
+    return new NextResponse(response.body, {
+      headers: {
+        'Content-Type':
+          response.headers.get('Content-Type') || 'application/octet-stream',
+      },
+    })
   } catch (e: any) {
     throw new Error(`Failed to fetch segment: ${e.message}`, {
       cause: e,
