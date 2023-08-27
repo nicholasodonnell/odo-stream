@@ -1,21 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function middleware(request: NextRequest) {
-  const requestUrl = new URL(request.url)
-  const response: NextResponse = NextResponse.next()
+import { setGlobalHeaders } from './actions/setGlobalHeaders'
+import { setStreamToken } from './actions/setStreamToken'
 
-  // CORS
-  response.headers.set('Access-Control-Allow-Credentials', 'true')
-  response.headers.set('Access-Control-Allow-Origin', requestUrl.origin)
-  response.headers.set('Access-Control-Allow-Methods', 'GET')
-
-  // Cache
-  response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate')
-  response.headers.set('Pragma', 'no-cache')
-
-  return response
+function isHomepage(pathname: string): boolean {
+  return pathname === '/'
 }
 
-export const config = {
-  matcher: ['/live.m3u8', '/live.stream-(.*).ts'],
+export async function middleware(request: NextRequest) {
+  const url = new URL(request.url)
+  const pathname = request.nextUrl.pathname
+  const response: NextResponse = NextResponse.next()
+
+  setGlobalHeaders(response, { origin: url.origin })
+
+  if (isHomepage(pathname)) {
+    await setStreamToken(response)
+  }
+
+  return response
 }

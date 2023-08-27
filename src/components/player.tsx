@@ -3,7 +3,8 @@
 import ReactHlsPlayer from '@gumlet/react-hls-player'
 import type { HlsPlayerProps } from '@gumlet/react-hls-player'
 import cx from 'classnames'
-import { useEffect, useRef } from 'react'
+import Hls, { ErrorData } from 'hls.js'
+import { useEffect, useRef, useState } from 'react'
 
 export type PlayerProps = {
   className?: string
@@ -28,22 +29,47 @@ const hlsConfig = {
 
 export function Player({ className, src }: PlayerProps): React.ReactNode {
   const playerRef = useRef<HTMLVideoElement>(null)
+  const [error, setError] = useState<Error | null>(null)
+  const [hlsRef, setHlsRef] = useState<Hls | null>(null)
 
   useEffect(() => {
+    const current = playerRef.current
+
     function handleError(e: ErrorEvent) {
-      throw new Error(`Error playing video: ${e.message}`, { cause: e })
+      setError(new Error(`Error playing video: ${e.message}`, { cause: e }))
     }
 
-    playerRef.current?.addEventListener('error', handleError)
+    current?.addEventListener('error', handleError, true)
 
-    return playerRef.current?.removeEventListener('error', handleError)
+    return () => {
+      current?.removeEventListener('error', handleError)
+    }
   }, [playerRef])
+
+  useEffect(() => {
+    function handleHlsError(event: string, data: ErrorData) {
+      if (data.fatal) {
+        setError(
+          new Error(
+            `Error playing video: ${data.response?.data ?? data.details}`,
+          ),
+        )
+      }
+    }
+
+    hlsRef?.on(Hls.Events.ERROR, handleHlsError)
+  }, [hlsRef])
+
+  if (error) {
+    throw error
+  }
 
   return (
     <ReactHlsPlayer
       autoPlay
       className={cx(className)}
       controls
+      getHLSRef={setHlsRef}
       hlsConfig={hlsConfig as unknown as HlsPlayerProps['hlsConfig']}
       muted
       playerRef={playerRef}

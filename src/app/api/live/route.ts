@@ -1,14 +1,23 @@
-import { NextResponse } from 'next/server'
+import HttpError from 'http-errors'
+import { NextRequest, NextResponse } from 'next/server'
+
+import { RS_URL, STREAM_TOKEN_COOKIE_NAME } from '../../../constants'
+import { verify } from '../../../lib/jwt'
 
 export const dynamic = 'force-dynamic'
-export const revalidate = 0
 export const fetchCache = 'force-no-store'
+export const revalidate = 0
 
-export async function GET(): Promise<Response> {
+export async function GET(request: NextRequest): Promise<Response> {
   try {
-    const response: Response = await fetch(
-      `${process.env.RS_URL}/hls/live.stream.m3u8`,
-    )
+    const token = request.cookies.get(STREAM_TOKEN_COOKIE_NAME)
+    const claims = token ? await verify(token.value) : undefined
+
+    if (!claims) {
+      throw HttpError.Unauthorized('Invalid token')
+    }
+
+    const response: Response = await fetch(`${RS_URL}/hls/live.stream.m3u8`)
 
     return new NextResponse(response.body, {
       headers: {
@@ -18,8 +27,10 @@ export async function GET(): Promise<Response> {
       },
     })
   } catch (e: any) {
-    throw new Error(`Failed to fetch playlist: ${e.message}`, {
+    const error = new Error(`Failed to fetch playlist: ${e.message}`, {
       cause: e,
     })
+
+    return new NextResponse(error.message)
   }
 }
