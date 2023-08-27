@@ -1,5 +1,4 @@
-import { PHASE_PRODUCTION_BUILD } from 'next/constants'
-
+import { getStreamOnline } from '../actions/getStreamOnline'
 import { Header } from '../components/header'
 import { Logo } from '../components/logo'
 import { Main } from '../components/main'
@@ -10,26 +9,8 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 export const fetchCache = 'force-no-store'
 
-async function getOnline() {
-  // skip during production build - restreamer is not guaranteed to be ready during build
-  if (process.env.NEXT_PHASE === PHASE_PRODUCTION_BUILD) {
-    return false
-  }
-
-  try {
-    const res: Response = await fetch(`${process.env.RS_URL}/v1/states`)
-    const data = await res.json()
-
-    return data?.repeat_to_local_nginx?.type === 'connected'
-  } catch (e: any) {
-    throw new Error(`Failed to fetch stream state: ${e.message}`, {
-      cause: e,
-    })
-  }
-}
-
 export default async function Page() {
-  const online = await getOnline()
+  const online: boolean = await getStreamOnline()
 
   return (
     <>
