@@ -3,16 +3,29 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { RS_URL, STREAM_TOKEN_COOKIE_NAME } from '../../../constants'
 import { verify } from '../../../lib/jwt'
+import * as logger from '../../../lib/logger'
 
 export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
 export const revalidate = 0
 
 export async function GET(request: NextRequest): Promise<Response> {
-  try {
-    const token = request.cookies.get(STREAM_TOKEN_COOKIE_NAME)
-    const claims = token ? await verify(token.value) : undefined
+  const ip =
+    request.headers.get('x-real-ip') ||
+    request.headers.get('x-forwarded-for') ||
+    request.ip
+  const token = request.cookies.get(STREAM_TOKEN_COOKIE_NAME)
+  const claims = token ? await verify(token.value) : undefined
 
+  const meta = {
+    geo: request.geo?.city as string,
+    ip: ip as string,
+    viewerId: claims?.viewerId as string,
+  }
+
+  logger.info('Live request', meta)
+
+  try {
     if (!claims) {
       throw HttpError.Unauthorized('Invalid token')
     }
@@ -30,6 +43,8 @@ export async function GET(request: NextRequest): Promise<Response> {
     const error = new Error(`Failed to fetch playlist: ${e.message}`, {
       cause: e,
     })
+
+    logger.error(`Live error: ${error.message}`, meta)
 
     return new NextResponse(error.message)
   }
