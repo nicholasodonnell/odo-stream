@@ -18,7 +18,7 @@ const hlsConfig = {
   initialLiveManifestSize: 2, // preload 2 chunks before autostart
   liveDurationInfinity: true, // instructs browser that video is live
   liveMaxLatencyDuration: 10, // if higher than this, adujst to liveSyncDuration
-  liveSyncDuration: 3, // how close to live to target? shorter than 3sec causes frequent buffering issues
+  liveSyncDuration: 5, // how close to live to target? shorter than 3sec causes frequent buffering issues
   lowLatencyMode: true, // enable low latency mode
   maxBufferLength: 10, // limit forward buffer
   maxLiveSyncPlaybackRate: 2, // if running behind, speed up video
