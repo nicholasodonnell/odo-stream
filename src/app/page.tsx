@@ -1,4 +1,5 @@
 import { getStreamOnline } from '../actions/getStreamOnline'
+import { getStreamToken } from '../actions/getStreamToken'
 import { Header } from '../components/header'
 import { Logo } from '../components/logo'
 import { Main } from '../components/main'
@@ -11,6 +12,7 @@ export const fetchCache = 'force-no-store'
 
 export default async function Page() {
   const online: boolean = await getStreamOnline()
+  const token: string = getStreamToken()
 
   return (
     <>
@@ -19,7 +21,10 @@ export default async function Page() {
       </Header>
       <Main className="relative items-center justify-center overflow-hidden">
         {online ? (
-          <Player className="absolute h-full" src="/live.m3u8" />
+          <Player
+            className="absolute h-full"
+            src={`/live.m3u8?token=${token}`}
+          />
         ) : (
           <Offline className="flex flex-1 flex-col items-center justify-center" />
         )}

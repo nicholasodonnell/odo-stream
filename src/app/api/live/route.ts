@@ -1,7 +1,7 @@
 import HttpError from 'http-errors'
 import { NextRequest, NextResponse } from 'next/server'
 
-import { RS_URL, STREAM_TOKEN_COOKIE_NAME } from '../../../constants'
+import { RS_URL } from '../../../constants'
 import { verify } from '../../../lib/jwt'
 import * as logger from '../../../lib/logger'
 
@@ -10,16 +10,20 @@ export const fetchCache = 'force-no-store'
 export const revalidate = 0
 
 export async function GET(request: NextRequest): Promise<Response> {
+  const url: URL = new URL(request.nextUrl)
   const ip =
     request.headers.get('x-real-ip') ||
     request.headers.get('x-forwarded-for') ||
     request.ip
-  const token = request.cookies.get(STREAM_TOKEN_COOKIE_NAME)
-  const claims = token ? await verify(token.value) : undefined
+  const userAgent = request.headers.get('user-agent')
+
+  const token: string | null = url.searchParams.get('token')
+  const claims = token ? await verify(token) : undefined
 
   const meta = {
     geo: request.geo?.city as string,
     ip: ip as string,
+    userAgent: userAgent as string,
     viewerId: claims?.viewerId as string,
   }
 
@@ -40,7 +44,7 @@ export async function GET(request: NextRequest): Promise<Response> {
       },
     })
   } catch (e: any) {
-    const error = new Error(`Failed to fetch playlist: ${e.message}`, {
+    const error = new Error(`Failed to fetch stream: ${e.message}`, {
       cause: e,
     })
 

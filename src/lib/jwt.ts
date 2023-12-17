@@ -3,14 +3,22 @@ import type { JWTPayload } from 'jose'
 
 import { SIGNING_SECRET } from '../constants'
 
+export type SignOptions = {
+  alg?: string
+  exp?: string
+}
+
 const secret = new TextEncoder().encode(SIGNING_SECRET)
 const alg = 'HS256'
 
-export async function sign(claims: JWTPayload): Promise<string> {
+export async function sign(
+  claims: JWTPayload,
+  { alg = 'HS256', exp = '1d' }: SignOptions = {},
+): Promise<string> {
   return await new jose.SignJWT(claims)
     .setProtectedHeader({ alg })
     .setIssuedAt()
-    .setExpirationTime('1d')
+    .setExpirationTime(exp)
     .sign(secret)
 }
 
