@@ -17,11 +17,12 @@ const hlsConfig = {
   enableWorker: true, // use workers
   initialLiveManifestSize: 2, // preload 2 chunks before autostart
   liveDurationInfinity: true, // instructs browser that video is live
-  liveMaxLatencyDuration: 10, // if higher than this, adujst to liveSyncDuration
-  liveSyncDuration: 5, // how close to live to target? shorter than 3sec causes frequent buffering issues
+  liveMaxLatencyDuration: 40, // maximum latency allowed before HLS.js seeks forward to reduce the latency (A lower value here helps in keeping the stream closer to real-time)
+  liveSyncDuration: 30, // how close to live to target? shorter than 3sec causes frequent buffering issues
   lowLatencyMode: true, // enable low latency mode
-  maxBufferLength: 10, // limit forward buffer
-  maxLiveSyncPlaybackRate: 2, // if running behind, speed up video
+  maxBufferLength: 30, // maximum length, in seconds, of the buffer
+  maxBufferSize: 60 * 1000 * 1000, // 60 MB maximum buffer size in bytes
+  maxMaxBufferLength: 60, // safeguard to ensure buffering doesn't exceed this value
   nudgeMaxRetry: 5, // increase retries before buffer stalled
   progressive: true, // use fetch instead of xhr
   testBandwidth: false, // disable auto bandwidth estimation
