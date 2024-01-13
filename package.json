@@ -1,6 +1,6 @@
 {
   "name": "odo-stream",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "license": "SEE LICENSE",
   "scripts": {
     "dev": "next dev",
