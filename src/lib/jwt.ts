@@ -5,7 +5,7 @@ import { SIGNING_SECRET } from '../constants'
 
 export type SignOptions = {
   alg?: string
-  exp?: string
+  exp?: string | number
 }
 
 const secret = new TextEncoder().encode(SIGNING_SECRET)
