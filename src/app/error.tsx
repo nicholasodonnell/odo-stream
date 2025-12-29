@@ -14,8 +14,7 @@ export default function Error({ error, reset }: ErrorProps): React.ReactNode {
       </pre>
       <button
         className="rounded-full border border-white px-4 py-2 font-bold transition-colors hover:bg-white hover:text-black"
-        onClick={reset}
-      >
+        onClick={reset}>
         Try again
       </button>
     </div>

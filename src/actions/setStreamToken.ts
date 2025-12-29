@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { v4 as uuid } from 'uuid'
 
 import { STREAM_TOKEN_COOKIE_NAME } from '../constants'
-import { sign } from '../lib/jwt'
+import { signStreamToken } from '../lib/token'
 
 const ONE_DAY_MS = 1000 * 60 * 60 * 24
 
@@ -15,11 +15,11 @@ export async function setStreamToken(
   }
 
   const expiration = new Date(Date.now() + ONE_DAY_MS)
-  const token = await sign(
+  const token = await signStreamToken(
     {
       viewerId: uuid(),
     },
-    { exp: Math.floor(expiration.getTime() / 1000) },
+    expiration,
   )
 
   response.cookies.set({

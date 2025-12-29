@@ -2,8 +2,8 @@ import HttpError from 'http-errors'
 import { NextRequest, NextResponse } from 'next/server'
 
 import { RS_URL } from '../../../constants'
-import { verify } from '../../../lib/jwt'
 import * as logger from '../../../lib/logger'
+import { type Claims, decodeStreamToken } from '../../../lib/token'
 
 export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
@@ -11,20 +11,14 @@ export const revalidate = 0
 
 export async function GET(request: NextRequest): Promise<Response> {
   const url: URL = new URL(request.nextUrl)
-  const ip =
-    request.headers.get('x-real-ip') ||
-    request.headers.get('x-forwarded-for') ||
-    request.ip
-  const userAgent = request.headers.get('user-agent')
 
-  const token: string | null = url.searchParams.get('token')
-  const claims = token ? await verify(token) : undefined
+  const token: null | string = url.searchParams.get('token')
+  const claims: Claims | null = await decodeStreamToken(token)
 
   const meta = {
-    geo: request.geo?.city as string,
-    ip: ip as string,
-    userAgent: userAgent as string,
-    viewerId: claims?.viewerId as string,
+    ip: getIp(request),
+    userAgent: request.headers.get('user-agent') ?? '',
+    viewerId: claims?.viewerId ?? 'unknown',
   }
 
   logger.info('Live request', meta)
@@ -52,4 +46,16 @@ export async function GET(request: NextRequest): Promise<Response> {
 
     return new NextResponse(error.message)
   }
+}
+
+function getIp(request: NextRequest): string {
+  const xForwardedFor = request.headers.get('x-forwarded-for')
+
+  if (xForwardedFor) {
+    return xForwardedFor.split(',')[0].trim()
+  }
+
+  const xRealIp = request.headers.get('x-real-ip')
+
+  return xRealIp || 'unknown'
 }

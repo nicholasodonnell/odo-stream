@@ -10,9 +10,9 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 export const fetchCache = 'force-no-store'
 
-export default async function Page() {
+export default async function Page(): Promise<React.ReactNode> {
   const online: boolean = await getStreamOnline()
-  const token: string = getStreamToken()
+  const token: string = await getStreamToken()
 
   return (
     <>

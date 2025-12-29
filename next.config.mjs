@@ -1,6 +1,4 @@
-/* eslint-disable prettier/prettier */
-
-const { v4: uuid } = require('uuid')
+import { v4 as uuid } from 'uuid'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -15,11 +13,10 @@ const nextConfig = {
       },
       {
         destination: `/api/segment`,
-        source: '/live.stream-(\.\*).ts',
+        source: '/live.stream-(.*).ts',
       },
     ]
   },
-  swcMinify: false,
 }
 
-module.exports = nextConfig
+export default nextConfig
