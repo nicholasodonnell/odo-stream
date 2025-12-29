@@ -1,9 +1,12 @@
-import './../styles/globals.css'
-import type { Metadata } from 'next'
+import './../app.css'
+import type { Metadata, Viewport } from 'next'
 
 export const metadata: Metadata = {
-  themeColor: '#000000',
   title: 'ODO Stream',
+}
+
+export const viewport: Viewport = {
+  themeColor: 'black',
 }
 
 export type RootLayoutProps = {
@@ -16,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="stylesheet" href="https://use.typekit.net/tho7jgz.css" />
+        <link href="https://use.typekit.net/tho7jgz.css" rel="stylesheet" />
       </head>
       <body className="fixed flex h-full w-full flex-col overflow-hidden bg-black text-white">
         {children}

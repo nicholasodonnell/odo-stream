@@ -7,5 +7,5 @@ export type LogoProps = {
 }
 
 export function Logo({ className }: LogoProps): React.ReactNode {
-  return <Image alt="Logo" src={logo} className={className} priority />
+  return <Image alt="Logo" className={className} priority src={logo} />
 }

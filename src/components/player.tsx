@@ -1,7 +1,8 @@
 'use client'
 
-import ReactHlsPlayer from '@gumlet/react-hls-player'
 import type { HlsPlayerProps } from '@gumlet/react-hls-player'
+
+import ReactHlsPlayer from '@gumlet/react-hls-player'
 import cx from 'classnames'
 import Hls, { ErrorData } from 'hls.js'
 import { useEffect, useRef, useState } from 'react'
@@ -73,7 +74,7 @@ export function Player({ className, src }: PlayerProps): React.ReactNode {
       getHLSRef={setHlsRef}
       hlsConfig={hlsConfig as unknown as HlsPlayerProps['hlsConfig']}
       muted
-      playerRef={playerRef}
+      playerRef={playerRef as React.RefObject<HTMLVideoElement>}
       playsInline
       src={src}
     />

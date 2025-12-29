@@ -1,7 +1,7 @@
 export enum LOG_LEVEL {
+  ERROR = 'ERROR',
   INFO = 'INFO',
   WARN = 'WARN',
-  ERROR = 'ERROR',
 }
 
 const loggerFn = {

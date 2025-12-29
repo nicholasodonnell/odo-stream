@@ -1,4 +1,3 @@
-version: "3.5"
 services:
 
   app:
@@ -6,11 +5,10 @@ services:
       target: development
     image: nicholasodonnell/odo-stream:dev
     volumes:
-      - ./next.config.js:/app/next.config.js
+      - ./next.config.mjs:/app/next.config.mjs
       - ./package-lock.json:/app/package-lock.json
       - ./package.json:/app/package.json
-      - ./postcss.config.js:/app/postcss.config.js
+      - ./postcss.config.mjs:/app/postcss.config.mjs
       - ./public:/app/public
       - ./src:/app/src
-      - ./tailwind.config.js:/app/tailwind.config.js
       - ./tsconfig.json:/app/tsconfig.json

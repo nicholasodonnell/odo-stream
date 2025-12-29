@@ -3,10 +3,10 @@ import { cookies, headers } from 'next/headers'
 
 import { STREAM_TOKEN_COOKIE_NAME } from '../constants'
 
-export function getStreamToken(): string {
-  const headersStore = headers()
-  const cookiesStore = cookies()
-  const responseCookies = new ResponseCookies(headersStore as Headers)
+export async function getStreamToken(): Promise<string> {
+  const headersStore = await headers()
+  const cookiesStore = await cookies()
+  const responseCookies = new ResponseCookies(headersStore)
 
   const streamTokenCookie =
     cookiesStore.get(STREAM_TOKEN_COOKIE_NAME) ??
